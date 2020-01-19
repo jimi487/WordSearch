@@ -7,57 +7,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.NavHostFragment
+import com.bohil.wordsearch.databinding.FragmentHelpBinding
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [HelpFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- */
+
 class HelpFragment : Fragment() {
-    private var listener: OnFragmentInteractionListener? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_help, container, false)
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
+        //Data binding variable
+        val binding: FragmentHelpBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_help, container, false)
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+        binding.backButton.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(HelpFragmentDirections.actionHelpFragmentToHomeFragment())
         }
+
+
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
 
 }

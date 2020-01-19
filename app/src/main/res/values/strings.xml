@@ -10,4 +10,11 @@
     <string name="quit_button">Quit</string>
     <string name="help_text">Help</string>
     <string name="version_text">Version: 0.01</string>
+
+    <!-- Help Fragment Strings -->
+    <string name="explanation_text">Tap letters in either a horizontal or a vertical direction.\nWhen
+        you think you have discovered one of the words listed on the bottom of the screen, tap
+    the submit button.\nContinue until you have found all words.</string>
+    <string name="explanation_hint">How to play the game</string>
+    <string name="back_button">Back</string>
 </resources>
