@@ -7,18 +7,14 @@ class GameViewModel : ViewModel() {
     // Word bank
     var words = arrayOf(
         "swift", "kotlin", "objectivec",
-        "variable", "java", "mobile", "intern", "summer"
+        "variable", "java", "mobile", "shopify", "intern", "summer"
     )
 
-    var gameBoard = arrayOf<Array<String>>()
+    var BOARD_SIZE = 10
+    var gameBoard = Array(BOARD_SIZE) { Array(BOARD_SIZE) { "-" } }
 
     /**
-     * Creates the letters inside of the table
-     * First shuffles the words inside the word array
-     * Then words are picked from the array and broken down into letters
-     * After a random spot has been picked that has enough space for all the letters, the letters
-     * are placed
-     * Continues until there are no more words inside the word bank
+     * Shuffles the words inside the word array
      */
     fun randomizeWords() {
         for (i in words.indices) {
