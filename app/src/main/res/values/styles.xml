@@ -21,7 +21,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:background">#00FFFFFF</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
     <style name="word_text_style">
