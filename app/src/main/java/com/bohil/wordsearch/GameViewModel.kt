@@ -1,22 +1,30 @@
 package com.bohil.wordsearch
 
+import android.widget.Button
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlin.random.Random
 
+
+//TODO Currently _currentText and the selected buttons list are separate entities
 class GameViewModel : ViewModel() {
 
-    val wordsFound = 0
+    var wordsFound = 0
     var BOARD_SIZE = 10
     var gameBoard = Array(BOARD_SIZE) { Array(BOARD_SIZE) { "-" } }
-    private val _currentText = MutableLiveData<String>("")
-    val currentText: LiveData<String>
-        get() = _currentText
     var words = listOf(
         "swift", "kotlin", "objectivec",
         "variable", "java", "mobile", "shopify", "intern", "summer"
     )
+
+    private val _currentText = MutableLiveData<String>("")
+    val currentText: LiveData<String>
+        get() = _currentText
+
+    private class SelectedButton(val char: String, val location: Pair<Int, Int>)
+
+    private var selectedButtonsList = ArrayList<SelectedButton>()
 
 
     /**
@@ -142,55 +150,136 @@ class GameViewModel : ViewModel() {
      */
     fun refreshBoard() {
         gameBoard = Array(BOARD_SIZE) { Array(BOARD_SIZE) { "-" } }
-        _currentText.value = ""
+        wordsFound = 0
+        clearSelection()
     }
+
 
     /**
-     * Adds the tapped character button to the current guess selection
+     * Adds the tapped character button to the current text selection
+     * Determines the orientation of the users current selection
+     * Restricts the user from selecting characters outside of the current orientation and path
+     *
+     * Returns:
+     * False - The word was not added to the current selection
+     * True - The word was added
      */
-    fun addToSelection(char: String) {
+    fun addToSelection(btn: Button): Boolean {
+        // Create object for button
+        val xyLocation = btn.tag.toString().takeLast(2)
+        val crntBtn =
+            SelectedButton(
+                btn.text.toString(),
+                Pair(xyLocation[0].toString().toInt(), xyLocation[1].toString().toInt())
+            )
 
-        //TODO Determine if its the first button pressed
+        /**
+         * Determines whether given buttons are neighbors
+         */
+        fun isNeighbor(btnPrev: Pair<Int, Int>, btnCurrent: Pair<Int, Int>): Boolean {
+            return (((btnPrev.first == btnCurrent.first) && (btnPrev.second == btnCurrent.second - 1))
+                    ||
+                    ((btnPrev.first == btnCurrent.first - 1) && (btnPrev.second == btnCurrent.second)))
 
-        //TODO Ensure the next character press is next to the previous character press
+        }
 
-        // TODO Determine the orientation after the next character presses
+        /**
+         * Determines whether the selected word is in the same orientation
+         */
+        fun sameOrientation(
+            btnPprev: Pair<Int, Int>,
+            btnPrev: Pair<Int, Int>,
+            btnCurrent: Pair<Int, Int>
+        ): Boolean {
+            return (((btnPprev.first == btnPrev.first - 1) && (btnPrev.first == btnCurrent.first - 1))
+                    ||
+                    ((btnPprev.second == btnPrev.second - 1) && (btnPrev.second == btnCurrent.second - 1)))
 
-        //
-        _currentText.value += char
-    }
-
-    //TODO Remove the last character in the current text selection
-    fun removeFromSelection() {
-
-    }
-
-    // TODO Clear the current selection string
-    fun clearCurrentSelection() {
-
-    }
-
-    // TODO Submits the word and checks if its valid
-    fun submitWord() {
-        _currentText.value = ""
-        for (word in words) {
-            if (_currentText.value in words) {
-
-            }
         }
 
 
+        when (selectedButtonsList.size) {
+            // When the string is empty, add it to the selection
+            0 -> {
+                _currentText.value += crntBtn.char
+                selectedButtonsList.add(crntBtn)
+                return true
+            }
+            1 -> {
+                // Determine if the current selection is next to the previous selection
+                val prevBtn = selectedButtonsList[0]
+                if (isNeighbor(prevBtn.location, crntBtn.location)) {
+                    _currentText.value += crntBtn.char
+                    selectedButtonsList.add(crntBtn)
+                    return true
+                } else return false
+            }
+            in 2 until BOARD_SIZE -> {
+                val pprevBtn = selectedButtonsList.get(selectedButtonsList.size - 2)
+                val prevBtn = selectedButtonsList.get(selectedButtonsList.size - 1)
+
+                if (isNeighbor(prevBtn.location, crntBtn.location)
+                    && sameOrientation(pprevBtn.location, prevBtn.location, crntBtn.location)
+                ) {
+                    _currentText.value += crntBtn.char
+                    selectedButtonsList.add(crntBtn)
+                    return true
+                } else return false
+            }
+            else -> {
+                return false
+            }
+        }
+
     }
 
-    fun findInList() {
+    /**
+     * Removes the last added character from the current selection
+     */
+    fun removeFromSelection() {
+        selectedButtonsList.removeAt(selectedButtonsList.size - 1)
+        _currentText.value =
+            _currentText.value.toString().substring(0, _currentText.value.toString().length - 1)
+    }
 
+    /**
+     * Clears the current text selection
+     */
+    fun clearSelection() {
+        do {
+            selectedButtonsList.removeAt(0)
+        } while (selectedButtonsList.size > 0)
+        _currentText.value = ""
+    }
+
+
+    /**
+     * Submits the word and checks if its valid
+     * Clearing of the text is done inside the GameFragment
+     */
+    fun submitWord(): Boolean {
+        if (_currentText.value in words) {
+            wordsFound++
+            return true
+        }
+        return false
+    }
+
+    /**
+     * Returns a list of all the pairs for each button in the selected button list
+     */
+    fun getSelectedPairs(): ArrayList<Pair<Int, Int>> {
+        val pairs = ArrayList<Pair<Int, Int>>()
+        for (pair in selectedButtonsList)
+            pairs.add(Pair(pair.location.first, pair.location.second))
+        return pairs
     }
 
     /**
      * Sorts words list from largest to smallest
+     * Larger words are placed first
      */
     private fun sortWords() {
-        //Words are sorted so larger words are placed first
         words = words.sortedWith(Comparator<String> { s1, s2 ->
             when {
                 s1.length > s2.length -> -1
