@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">WordSearch</string>
+
+    <!-- Home Fragment Strings -->
+    <string name="title_text">WordSearch</string>
+    <string name="start_button">Start</string>
+    <string name="quit_button">Quit</string>
+    <string name="help_text">Help</string>
+    <string name="version_text">Version: 0.01</string>
+
+    <!-- Help Fragment Strings -->
+    <string name="explanation_text">Tap letters in either a horizontal or a vertical direction.\nWhen
+        you think you have discovered one of the words listed on the bottom of the screen, tap
+    the submit button.\nContinue until you have found all words.</string>
+    <string name="explanation_hint">How to play the game</string>
+    <string name="back_button">Back</string>
+
+    <!-- Game Fragment Strings -->
+    <string name="time_text">Time:</string>
+    <string name="game_button_text">Quit</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="word_text_00">Word00</string>
+    <string name="word_text_01">Word01</string>
+    <string name="word_text_02">Word02</string>
+    <string name="word_text_03">Word03</string>
+    <string name="word_text_04">Word04</string>
+    <string name="word_text_05">Word05</string>
+    <string name="word_text_06">Word06</string>
+    <string name="word_text_07">Word07</string>
+    <string name="word_text_08">Word08</string>
+    <string name="char_btn_placeholder">-</string>
+
+
 </resources>
